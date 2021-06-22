@@ -1,34 +1,162 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Boilerplate for React project
 
-## Getting Started
+All you need to make an app for react application
 
-First, run the development server:
+This project is a template starter kit with nextjs. Have `.eslintrc.js` integrated for best practices, also have many other packages to help speed up development.
 
-```bash
-npm run dev
-# or
-yarn dev
+
+Development tools installed:
+- [Eslint](https://eslint.org/)
+- [Commitizen](https://github.com/commitizen/cz-cli)
+- [Husky](https://github.com/typicode/husky)
+- [jest-expo](https://docs.expo.io/guides/testing-with-jest/)
+
+Don't forget to add `formatOnSave` if you are using VSCode to format your code on save, makes life so much easier following the `.eslintrc.js` given on the boilerplate. For example:
+
+```
+    "[javascript]": {
+        "editor.defaultFormatter":"dbaeumer.vscode-eslint",
+        "editor.formatOnSave": true
+    },
+    "editor.codeActionsOnSave": {
+        // For ESLint
+        "source.fixAll.eslint": true,
+    },
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Helpers:
+- Formik-material component that is located in `./src/formik-material`, this is a wrapper for `material-ui` to use with `formik`
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+Packages used here can be find in `setup-dev.sh`:
+- [Formik](https://formik.org/) for forms
+- [Yup](https://github.com/jquense/yup) for validations
+- [React-redux](https://github.com/reduxjs/react-redux)
+- [Redux](https://github.com/reduxjs/redux)
+- [Redux-saga](https://github.com/redux-saga/redux-saga)
+- [Dayjs](https://github.com/iamkun/dayjs)
+- [Axios](https://github.com/axios/axios)
+- [Material-ui](https://material-ui.com/)
+- [Tailwindcss](https://tailwindcss.com/)
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## How It Works
+### Forms
+We have a `formik` wrapper on used components with a `Material-ui` UI library so it makes it soo easy for you to create forms.
 
-## Learn More
+Example form:
+```
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
+import * as yup from "yup";
+import { Formik } from "formik";
+import { useDispatch } from "react-redux";
+import { Button } from "@ui-kitten/components";
+import { TextField } from "../components/forms";
+import { actions as messageActions } from "../store/ducks/message.duck";
 
-To learn more about Next.js, take a look at the following resources:
+const validationSchema = yup.object().shape({
+  fullName: yup.string().required("Required"),
+});
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+const initialValues = {
+  fullName: "",
+};
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+export default function HomeScreen() {
+  const dispatch = useDispatch();
 
-## Deploy on Vercel
+  const handleFormSubmit = (values) => {
+    try {
+      dispatch(
+        messageActions.showMessage({
+          message: `My name is: ${values.fullName}`,
+        })
+      );
+    } catch (e) {
+      dispatch(
+        messageActions.showMessage({
+          message: "There are some error",
+        })
+      );
+    }
+  };
+  return (
+    <View style={styles.container}>
+      <Formik
+        validationSchema={validationSchema}
+        initialValues={initialValues}
+        onSubmit={handleFormSubmit}
+      >
+        {({ handleSubmit, isSubmitting }) => (
+          <>
+            <TextField label="Full Name" name="fullName" />
+            <Button onPress={handleSubmit} disabled={isSubmitting}>
+              Submit
+            </Button>
+          </>
+        )}
+      </Formik>
+    </View>
+  );
+}
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```
+
+### Feedbacks
+
+After every resolve or reject for form API, we should give a feedback to the user saying either it succeed, or failed.
+
+For this, there is a default `<Message />` component that is attached with the state saved in redux: `message.duck.js`
+
+To display a message in any component, simply do:
+```
+			<Formik
+				enableReinitialize
+				initialValues={adminInitialValues}
+				onSubmit={handleSubmit}
+				validationSchema={validationAdmin}
+			>
+				{({ isSubmitting }) => (
+					<Form>
+						<div className="grid grid-cols-6 gap-16">
+							<FormikPicker
+								label="Issue Read"
+								className="col-span-6 sm:col-span-3"
+								dateTime={false}
+								variant="outlined"
+								name="issue_read_date"
+							/>
+							<FormikPicker
+								label="Date Resolved"
+								className="col-span-6 sm:col-span-3"
+								dateTime={false}
+								variant="outlined"
+								name="resolve_date"
+							/>
+							<FormikTextField
+								className="col-span-6"
+								variant="outlined"
+								multiline
+								rows={5}
+								id="action_to_resolve"
+								name="action_to_resolve"
+								label="Action to resolve"
+							/>
+							<Button variant="contained" type="submit" color="primary" disabled={isSubmitting}>
+								Submit
+							</Button>
+						</div>
+					</Form>
+				)}
+			</Formik>
+```
+
