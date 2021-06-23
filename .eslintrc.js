@@ -6,6 +6,7 @@ module.exports = {
   },
   parser: "babel-eslint",
   extends: [
+    "plugin:@next/next/recommended",
     "react-app",
     "plugin:react/recommended",
     "airbnb",
