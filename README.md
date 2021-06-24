@@ -9,7 +9,6 @@ Development tools installed:
 - [Eslint](https://eslint.org/)
 - [Commitizen](https://github.com/commitizen/cz-cli)
 - [Husky](https://github.com/typicode/husky)
-- [jest-expo](https://docs.expo.io/guides/testing-with-jest/)
 
 Don't forget to add `formatOnSave` if you are using VSCode to format your code on save, makes life so much easier following the `.eslintrc.js` given on the boilerplate. For example:
 
