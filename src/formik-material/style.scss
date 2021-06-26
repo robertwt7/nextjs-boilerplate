@@ -1,0 +1,19 @@
+.sigCanvas {
+	width: 70%;
+	height: 100%;
+	margin: 0;
+	background: #ffffff;
+	border: 2px solid black;
+}
+
+.sigPad {
+	width: 100%;
+	height: 100%;
+}
+
+.gridContainer {
+	flex-grow: 1;
+	align-items: stretch;
+	align-content: stretch;
+	margin: 8;
+}

@@ -13,12 +13,14 @@ npx husky-init && yarn
 npx husky add .husky/prepare-commit-msg 'exec < /dev/tty && git cz --hook || true'
 
 # Setup boilerplate needed
-yarn add formik yup dayjs axios
+yarn add formik yup dayjs axios clsx react-signature-canvas prop-types
 yarn add redux redux-persist redux-saga react-redux
 yarn add tailwindcss@latest postcss@latest autoprefixer@latest
+
 
 # Setup tailwind
 npx tailwindcss init -p
 
 # Material ui
 yarn add @material-ui/core @material-ui/icons @material-ui/styles
+yarn add @material-ui/lab @material-ui/pickers @date-io/dayjs

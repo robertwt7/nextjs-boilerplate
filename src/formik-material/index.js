@@ -1,139 +1,157 @@
-import React, { useCallback, useRef, useEffect, useState, useContext } from 'react';
-import { withStyles, makeStyles } from '@material-ui/core/styles';
-import DayjsUtils from '@date-io/dayjs';
+import React, {
+  useCallback,
+  useRef,
+  useEffect,
+  useState,
+  useContext,
+} from "react";
+import { withStyles, makeStyles } from "@material-ui/core/styles";
+import DayjsUtils from "@date-io/dayjs";
 import {
-	InputBase,
-	FormControl,
-	Select,
-	MenuItem,
-	FormHelperText,
-	InputLabel,
-	TextField,
-	RadioGroup,
-	FormControlLabel,
-	Radio,
-	FormGroup,
-	Switch,
-	Button,
-	Grid,
-	FormLabel,
-	Card,
-	CardMedia,
-	ButtonGroup,
-	Typography,
-	Input,
-	Checkbox,
-	ListItemText,
-	Chip
-} from '@material-ui/core';
+  InputBase,
+  FormControl,
+  Select,
+  MenuItem,
+  FormHelperText,
+  InputLabel,
+  TextField,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  FormGroup,
+  Switch,
+  Button,
+  Grid,
+  FormLabel,
+  Card,
+  CardMedia,
+  ButtonGroup,
+  Typography,
+  Input,
+  Checkbox,
+  ListItemText,
+  Chip,
+} from "@material-ui/core";
 import {
-	KeyboardDatePicker,
-	KeyboardDateTimePicker,
-	DateTimePicker,
-	DatePicker,
-	MuiPickersUtilsProvider,
-	TimePicker
-} from '@material-ui/pickers';
-import { useField, useFormikContext, FieldArray } from 'formik';
-import PropTypes from 'prop-types';
-import SignatureCanvas from 'react-signature-canvas';
-import '../styles/styles.scss';
-import * as dayjs from 'dayjs';
-import axios from 'axios';
-import clsx from 'clsx';
-import Slide from '@material-ui/core/Slide';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+  KeyboardDatePicker,
+  KeyboardDateTimePicker,
+  DateTimePicker,
+  DatePicker,
+  MuiPickersUtilsProvider,
+  TimePicker,
+} from "@material-ui/pickers";
+import { useField, useFormikContext, FieldArray } from "formik";
+import PropTypes from "prop-types";
+import SignatureCanvas from "react-signature-canvas";
+import "../styles/styles.scss";
+import * as dayjs from "dayjs";
+import axios from "axios";
+import clsx from "clsx";
+import Slide from "@material-ui/core/Slide";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 
 // Style used locally
-export const useStyles = makeStyles(theme => ({
-	root: {
-		width: '100%'
-	},
-	media: {
-		height: 0,
-		paddingTop: '56.25%' // 16:9
-	},
-	button: {
-		marginRight: theme.spacing(1)
-	},
-	instructions: {
-		marginTop: theme.spacing(2),
-		marginBottom: theme.spacing(1)
-	},
-	margin: {
-		margin: theme.spacing(1)
-	},
-	p8: {
-		padding: theme.spacing(1)
-	},
-	full: {
-		width: '100%',
-		height: '100%'
-	},
-	flex: {
-		display: 'flex'
-	},
-	formControl: {
-		margin: `${theme.spacing(3)}px 0px`
-	}
+export const useStyles = makeStyles((theme) => ({
+  root: {
+    width: "100%",
+  },
+  media: {
+    height: 0,
+    paddingTop: "56.25%", // 16:9
+  },
+  button: {
+    marginRight: theme.spacing(1),
+  },
+  instructions: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1),
+  },
+  margin: {
+    margin: theme.spacing(1),
+  },
+  p8: {
+    padding: theme.spacing(1),
+  },
+  full: {
+    width: "100%",
+    height: "100%",
+  },
+  flex: {
+    display: "flex",
+  },
+  formControl: {
+    margin: `${theme.spacing(3)}px 0px`,
+  },
 }));
 
 FormikCheckbox.propTypes = {
-	label: PropTypes.string,
-	name: PropTypes.string,
-	options: PropTypes.arrayOf(PropTypes.object),
-	customHandleChange: PropTypes.func
+  label: PropTypes.string,
+  name: PropTypes.string,
+  options: PropTypes.arrayOf(PropTypes.object),
+  customHandleChange: PropTypes.func,
 };
 
-export function FormikCheckbox({ label, name, options, customHandleChange = undefined }) {
-	const classes = useStyles();
-	const [field, meta] = useField(name);
-	const { setFieldValue } = useFormikContext();
-	const handleChange = useCallback(
-		event => {
-			const index = field.value.findIndex(item => item.id === parseInt(event.target.name, 10));
-			const itemValue = {
-				...field.value[index],
-				is_checked: event.target.checked
-			};
-			const newValue = [...field.value];
-			newValue[index] = itemValue;
+export function FormikCheckbox({
+  label,
+  name,
+  options,
+  customHandleChange = undefined,
+}) {
+  const classes = useStyles();
+  const [field, meta] = useField(name);
+  const { setFieldValue } = useFormikContext();
+  const handleChange = useCallback(
+    (event) => {
+      const index = field.value.findIndex(
+        (item) => item.id === parseInt(event.target.name, 10)
+      );
+      const itemValue = {
+        ...field.value[index],
+        is_checked: event.target.checked,
+      };
+      const newValue = [...field.value];
+      newValue[index] = itemValue;
 
-			setFieldValue(name, newValue);
-		},
-		[field.value, name]
-	);
-	return (
-		<div className={classes.flex}>
-			<FormControl required error={meta.error} component="fieldset" className={classes.formControl}>
-				<FormLabel component="legend">{label}</FormLabel>
-				<FormGroup>
-					{options.map(item => (
-						<FormControlLabel
-							key={item.id}
-							control={
-								<Checkbox
-									checked={item.is_checked}
-									onChange={customHandleChange || handleChange}
-									name={item.id}
-								/>
-							}
-							label={item.name}
-						/>
-					))}
-				</FormGroup>
-			</FormControl>
-		</div>
-	);
+      setFieldValue(name, newValue);
+    },
+    [field.value, name]
+  );
+  return (
+    <div className={classes.flex}>
+      <FormControl
+        required
+        error={meta.error}
+        component="fieldset"
+        className={classes.formControl}
+      >
+        <FormLabel component="legend">{label}</FormLabel>
+        <FormGroup>
+          {options.map((item) => (
+            <FormControlLabel
+              key={item.id}
+              control={
+                <Checkbox
+                  checked={item.is_checked}
+                  onChange={customHandleChange || handleChange}
+                  name={item.id}
+                />
+              }
+              label={item.name}
+            />
+          ))}
+        </FormGroup>
+      </FormControl>
+    </div>
+  );
 }
 
 AutoCompleteTextField.propTypes = {
-	id: PropTypes.string,
-	options: PropTypes.arrayOf(PropTypes.object),
-	label: PropTypes.string,
-	variant: PropTypes.string,
-	name: PropTypes.string,
-	useIdAsValue: PropTypes.bool
+  id: PropTypes.string,
+  options: PropTypes.arrayOf(PropTypes.object),
+  label: PropTypes.string,
+  variant: PropTypes.string,
+  name: PropTypes.string,
+  useIdAsValue: PropTypes.bool,
 };
 
 /**
@@ -143,506 +161,567 @@ AutoCompleteTextField.propTypes = {
  *
  * @props useIdAsValue is like FormikSelect where it used the ID of an object for value
  */
-function AutoCompleteTextField({ id, options, label, name, variant = 'outlined', useIdAsValue = false }) {
-	const [field, meta] = useField(name);
-	const { setFieldValue } = useFormikContext();
-	const [selectedVal, setSelectedVal] = useState({});
+function AutoCompleteTextField({
+  id,
+  options,
+  label,
+  name,
+  variant = "outlined",
+  useIdAsValue = false,
+}) {
+  const [field, meta] = useField(name);
+  const { setFieldValue } = useFormikContext();
+  const [selectedVal, setSelectedVal] = useState({});
 
-	const handleChange = React.useCallback(
-		(event, newVal) => {
-			if (useIdAsValue) {
-				if (newVal) {
-					setFieldValue(name, newVal.id);
-				} else {
-					setFieldValue(name, '');
-				}
-			} else {
-				setFieldValue(name, newVal);
-			}
-		},
-		[setFieldValue, name, useIdAsValue]
-	);
+  const handleChange = React.useCallback(
+    (event, newVal) => {
+      if (useIdAsValue) {
+        if (newVal) {
+          setFieldValue(name, newVal.id);
+        } else {
+          setFieldValue(name, "");
+        }
+      } else {
+        setFieldValue(name, newVal);
+      }
+    },
+    [setFieldValue, name, useIdAsValue]
+  );
 
-	useEffect(() => {
-		// Only used if we want to use id as value
-		// If field.value has data then initiate the correct one
-		if (useIdAsValue) {
-			if (field.value) {
-				const index = options.findIndex(item => item.id === parseInt(field.value, 10));
-				setSelectedVal(options[index]);
-			} else {
-				setSelectedVal({});
-			}
-		}
-	}, [field.value, options, useIdAsValue]);
+  useEffect(() => {
+    // Only used if we want to use id as value
+    // If field.value has data then initiate the correct one
+    if (useIdAsValue) {
+      if (field.value) {
+        const index = options.findIndex(
+          (item) => item.id === parseInt(field.value, 10)
+        );
+        setSelectedVal(options[index]);
+      } else {
+        setSelectedVal({});
+      }
+    }
+  }, [field.value, options, useIdAsValue]);
 
-	return (
-		<Autocomplete
-			id={id}
-			options={options}
-			onChange={handleChange}
-			getOptionLabel={option => option.name || ''}
-			value={useIdAsValue ? selectedVal : field.value}
-			renderInput={params => (
-				<TextField
-					{...params}
-					label={label}
-					variant={variant}
-					FormHelperTextProps={{ error: true }}
-					helperText={meta.error ? String(meta.error) : null}
-				/>
-			)}
-		/>
-	);
+  return (
+    <Autocomplete
+      id={id}
+      options={options}
+      onChange={handleChange}
+      getOptionLabel={(option) => option.name || ""}
+      value={useIdAsValue ? selectedVal : field.value}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label={label}
+          variant={variant}
+          FormHelperTextProps={{ error: true }}
+          helperText={meta.error ? String(meta.error) : null}
+        />
+      )}
+    />
+  );
 }
 
 export const FormikFileUpload = ({ name, label, uploadUrl, ...props }) => {
-	const [field, meta] = useField(name);
-	const { setFieldValue } = useFormikContext();
-	const classes = useStyles();
-	const handleChange = useCallback(
-		async e => {
-			const files = [];
-			const data = new FormData();
-			data.append('userId', 1);
-			for (let x = 0; x < e.currentTarget.files.length; x += 1) {
-				files.push(e.currentTarget.files[x]);
-				data.append('images[]', e.currentTarget.files[x]);
-			}
+  const [field, meta] = useField(name);
+  const { setFieldValue } = useFormikContext();
+  const classes = useStyles();
+  const handleChange = useCallback(
+    async (e) => {
+      const files = [];
+      const data = new FormData();
+      data.append("userId", 1);
+      for (let x = 0; x < e.currentTarget.files.length; x += 1) {
+        files.push(e.currentTarget.files[x]);
+        data.append("images[]", e.currentTarget.files[x]);
+      }
 
-			try {
-				const payload = await axios.post(uploadUrl, data, {
-					headers: {
-						'Content-Type': 'multipart/form-data'
-					}
-				});
-				const { data: links } = payload;
-				setFieldValue(name, links);
-			} catch (err) {
-				console.log(`There is an error in uploading the image${err.message}`);
-			}
-		},
-		[name, setFieldValue]
-	);
+      try {
+        const payload = await axios.post(uploadUrl, data, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        const { data: links } = payload;
+        setFieldValue(name, links);
+      } catch (err) {
+        console.log(`There is an error in uploading the image${err.message}`);
+      }
+    },
+    [name, setFieldValue]
+  );
 
-	return (
-		<>
-			<Button variant="contained" component="label" className={classes.instructions}>
-				{label || 'Upload File'}
-				<input name={name} {...props} type="file" style={{ display: 'none' }} onChange={handleChange} />
-			</Button>
-			{meta.error ? <p className="text-danger">{meta.error}</p> : null}
-			{field.value &&
-				field.value.map((value, index) => (
-					<Card className={classes.root} key={index}>
-						<CardMedia className={`${classes.media} bg-contain`} image={value} title="Thumbnail" />
-					</Card>
-				))}
-		</>
-	);
+  return (
+    <>
+      <Button
+        variant="contained"
+        component="label"
+        className={classes.instructions}
+      >
+        {label || "Upload File"}
+        <input
+          name={name}
+          {...props}
+          type="file"
+          style={{ display: "none" }}
+          onChange={handleChange}
+        />
+      </Button>
+      {meta.error ? <p className="text-danger">{meta.error}</p> : null}
+      {field.value &&
+        field.value.map((value, index) => (
+          <Card className={classes.root} key={index}>
+            <CardMedia
+              className={`${classes.media} bg-contain`}
+              image={value}
+              title="Thumbnail"
+            />
+          </Card>
+        ))}
+    </>
+  );
 };
 
 FormikFileUpload.propTypes = {
-	name: PropTypes.string,
-	label: PropTypes.string,
-	uploadUrl: PropTypes.string.isRequired
+  name: PropTypes.string,
+  label: PropTypes.string,
+  uploadUrl: PropTypes.string.isRequired,
 };
 
 function areEqual(prevProps, nextProps) {
-	if (prevProps.value === nextProps.value && prevProps.label === nextProps.label) {
-		return true;
-	}
-	return false;
+  if (
+    prevProps.value === nextProps.value &&
+    prevProps.label === nextProps.label
+  ) {
+    return true;
+  }
+  return false;
 }
 
 export const FormikTextField = React.memo(({ className, ...props }) => {
-	const classes = useStyles();
-	const [field, meta] = useField(props);
+  const classes = useStyles();
+  const [field, meta] = useField(props);
 
-	return (
-		<>
-			<TextField
-				className={className || `${classes.margin} ${classes.instructions}`}
-				{...field}
-				{...props}
-				FormHelperTextProps={{ error: true }}
-				helperText={meta.error ? String(meta.error) : null}
-				aria-invalid={Boolean(meta.error)}
-			/>
-		</>
-	);
+  return (
+    <>
+      <TextField
+        className={className || `${classes.margin} ${classes.instructions}`}
+        {...field}
+        {...props}
+        FormHelperTextProps={{ error: true }}
+        helperText={meta.error ? String(meta.error) : null}
+        aria-invalid={Boolean(meta.error)}
+      />
+    </>
+  );
 }, areEqual);
 
 FormikTextField.propTypes = {
-	className: PropTypes.string
+  className: PropTypes.string,
 };
 
 export const FormikNativeTime = ({ className, ...props }) => {
-	const [field, meta] = useField(props);
-	return (
-		<TextField
-			type="time"
-			defaultValue="22:30"
-			className={className || 'mx-8 w-full'}
-			InputLabelProps={{
-				shrink: true
-			}}
-			inputProps={{
-				step: 300 // 5 min
-			}}
-			helperText={meta.error ? String(meta.error) : null}
-			{...field}
-			{...props}
-		/>
-	);
+  const [field, meta] = useField(props);
+  return (
+    <TextField
+      type="time"
+      defaultValue="22:30"
+      className={className || "mx-8 w-full"}
+      InputLabelProps={{
+        shrink: true,
+      }}
+      inputProps={{
+        step: 300, // 5 min
+      }}
+      helperText={meta.error ? String(meta.error) : null}
+      {...field}
+      {...props}
+    />
+  );
 };
 
 FormikNativeTime.propTypes = {
-	className: PropTypes.string
+  className: PropTypes.string,
 };
 
-export const FormikSwitch = ({ name, label, color, customHandleChange, helperText = undefined }) => {
-	const [field, meta] = useField(name);
-	const { setFieldValue } = useFormikContext();
-	const classes = useStyles();
+export const FormikSwitch = ({
+  name,
+  label,
+  color,
+  customHandleChange,
+  helperText = undefined,
+}) => {
+  const [field, meta] = useField(name);
+  const { setFieldValue } = useFormikContext();
+  const classes = useStyles();
 
-	const handleChange = useCallback(
-		e => {
-			setFieldValue(name, e.target.checked);
-		},
-		[name, setFieldValue]
-	);
+  const handleChange = useCallback(
+    (e) => {
+      setFieldValue(name, e.target.checked);
+    },
+    [name, setFieldValue]
+  );
 
-	return (
-		<>
-			<FormGroup className={classes.margin}>
-				<FormControlLabel
-					name={name}
-					control={
-						<Switch checked={field.value} onChange={customHandleChange || handleChange} className={color} />
-					}
-					label={label}
-				/>
-				{helperText && <FormHelperText>{helperText}</FormHelperText>}
-			</FormGroup>
-			{meta.error ? <p className="text-warning">{meta.error}</p> : null}
-		</>
-	);
+  return (
+    <>
+      <FormGroup className={classes.margin}>
+        <FormControlLabel
+          name={name}
+          control={
+            <Switch
+              checked={field.value}
+              onChange={customHandleChange || handleChange}
+              className={color}
+            />
+          }
+          label={label}
+        />
+        {helperText && <FormHelperText>{helperText}</FormHelperText>}
+      </FormGroup>
+      {meta.error ? <p className="text-warning">{meta.error}</p> : null}
+    </>
+  );
 };
 
 FormikSwitch.propTypes = {
-	name: PropTypes.string.isRequired,
-	label: PropTypes.string.isRequired,
-	color: PropTypes.string,
-	customHandleChange: PropTypes.func,
-	helperText: PropTypes.string
+  name: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  color: PropTypes.string,
+  customHandleChange: PropTypes.func,
+  helperText: PropTypes.string,
 };
 
 export const FormikSelect = React.memo(
-	({
-		label,
-		labelId,
-		selectId,
-		options,
-		name,
-		className,
-		helperText = 'Select value from the drop down',
-		customHandleChange,
-		...props
-	}) => {
-		const [field, meta] = useField(name);
-		const classes = useStyles();
-		const { setFieldValue } = useFormikContext();
-		const handleChange = useCallback(
-			e => {
-				setFieldValue(name, e.target.value);
-			},
-			[name, setFieldValue]
-		);
+  ({
+    label,
+    labelId,
+    selectId,
+    options,
+    name,
+    className,
+    helperText = "Select value from the drop down",
+    customHandleChange,
+    ...props
+  }) => {
+    const [field, meta] = useField(name);
+    const classes = useStyles();
+    const { setFieldValue } = useFormikContext();
+    const handleChange = useCallback(
+      (e) => {
+        setFieldValue(name, e.target.value);
+      },
+      [name, setFieldValue]
+    );
 
-		const renderHelperText = useCallback(() => {
-			if (typeof helperText === 'function') {
-				return helperText();
-			}
-			return helperText;
-		}, [helperText]);
+    const renderHelperText = useCallback(() => {
+      if (typeof helperText === "function") {
+        return helperText();
+      }
+      return helperText;
+    }, [helperText]);
 
-		return (
-			<FormControl variant="outlined" className={clsx(className || classes.margin, 'min-w-128')}>
-				<InputLabel id={labelId}>{label}</InputLabel>
-				<Select
-					{...field}
-					{...props}
-					label={label}
-					labelId={labelId}
-					id={selectId}
-					onChange={customHandleChange || handleChange}
-					name={name}
-				>
-					<MenuItem value="">
-						<em>None</em>
-					</MenuItem>
-					{options.map(value => (
-						<MenuItem value={value.id || value.name} key={value.id || value.name}>
-							{value.name}
-						</MenuItem>
-					))}
-				</Select>
-				<FormHelperText error={Boolean(meta.error)}>
-					{meta.error ? String(meta.error) : renderHelperText()}
-				</FormHelperText>
-			</FormControl>
-		);
-	}
+    return (
+      <FormControl
+        variant="outlined"
+        className={clsx(className || classes.margin, "min-w-128")}
+      >
+        <InputLabel id={labelId}>{label}</InputLabel>
+        <Select
+          {...field}
+          {...props}
+          label={label}
+          labelId={labelId}
+          id={selectId}
+          onChange={customHandleChange || handleChange}
+          name={name}
+        >
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
+          {options.map((value) => (
+            <MenuItem
+              value={value.id || value.name}
+              key={value.id || value.name}
+            >
+              {value.name}
+            </MenuItem>
+          ))}
+        </Select>
+        <FormHelperText error={Boolean(meta.error)}>
+          {meta.error ? String(meta.error) : renderHelperText()}
+        </FormHelperText>
+      </FormControl>
+    );
+  }
 );
 
 FormikSelect.propTypes = {
-	label: PropTypes.string.isRequired,
-	name: PropTypes.string.isRequired,
-	labelId: PropTypes.string.isRequired,
-	selectId: PropTypes.string.isRequired,
-	className: PropTypes.string,
-	helperText: PropTypes.string,
-	options: PropTypes.arrayOf(PropTypes.object).isRequired,
-	customHandleChange: PropTypes.func
+  label: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  labelId: PropTypes.string.isRequired,
+  selectId: PropTypes.string.isRequired,
+  className: PropTypes.string,
+  helperText: PropTypes.string,
+  options: PropTypes.arrayOf(PropTypes.object).isRequired,
+  customHandleChange: PropTypes.func,
 };
 
-export const FormikRadioButton = ({ name, options, label, disabled = false, ...props }) => {
-	const [field, meta] = useField(name);
-	const { setFieldValue } = useFormikContext();
-	const handleChange = useCallback(
-		e => {
-			setFieldValue(name, parseInt(e.target.value, 10));
-		},
-		[name, setFieldValue]
-	);
+export const FormikRadioButton = ({
+  name,
+  options,
+  label,
+  disabled = false,
+  ...props
+}) => {
+  const [field, meta] = useField(name);
+  const { setFieldValue } = useFormikContext();
+  const handleChange = useCallback(
+    (e) => {
+      setFieldValue(name, parseInt(e.target.value, 10));
+    },
+    [name, setFieldValue]
+  );
 
-	return (
-		<>
-			<FormControl component="fieldset">
-				<FormLabel component="legend" required>
-					{label}
-				</FormLabel>
-				<RadioGroup {...field} {...props} name={name} onChange={handleChange}>
-					{options.map(value => (
-						<FormControlLabel
-							control={<Radio disabled={disabled} />}
-							label={value.name}
-							value={value.id}
-							key={value.id}
-						/>
-					))}
-				</RadioGroup>
-				{meta.error ? <div className="error">{meta.error}</div> : null}
-			</FormControl>
-		</>
-	);
+  return (
+    <>
+      <FormControl component="fieldset">
+        <FormLabel component="legend" required>
+          {label}
+        </FormLabel>
+        <RadioGroup {...field} {...props} name={name} onChange={handleChange}>
+          {options.map((value) => (
+            <FormControlLabel
+              control={<Radio disabled={disabled} />}
+              label={value.name}
+              value={value.id}
+              key={value.id}
+            />
+          ))}
+        </RadioGroup>
+        {meta.error ? <div className="error">{meta.error}</div> : null}
+      </FormControl>
+    </>
+  );
 };
 
 FormikRadioButton.propTypes = {
-	options: PropTypes.arrayOf(PropTypes.object).isRequired,
-	label: PropTypes.string.isRequired,
-	name: PropTypes.string.isRequired,
-	disabled: PropTypes.bool
+  options: PropTypes.arrayOf(PropTypes.object).isRequired,
+  label: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  disabled: PropTypes.bool,
 };
 
 export const FormikPicker = ({
-	format = null,
-	dateTime = 'true',
-	name,
-	label,
-	variant = 'dialog',
-	inputVariant = 'standard',
-	className,
-	...props
+  format = null,
+  dateTime = "true",
+  name,
+  label,
+  variant = "dialog",
+  inputVariant = "standard",
+  className,
+  ...props
 }) => {
-	const [field, meta] = useField(name);
-	const classes = useStyles();
-	const { setFieldValue } = useFormikContext();
+  const [field, meta] = useField(name);
+  const classes = useStyles();
+  const { setFieldValue } = useFormikContext();
 
-	const handlePickerChange = useCallback(
-		value => {
-			// Format value according to Moment JS in YYYY-MM-DDTHH:mm:iiZ
-			const time = value ? value.format() : null;
-			setFieldValue(name, time);
-		},
-		[name, setFieldValue]
-	);
+  const handlePickerChange = useCallback(
+    (value) => {
+      // Format value according to Moment JS in YYYY-MM-DDTHH:mm:iiZ
+      const time = value ? value.format() : null;
+      setFieldValue(name, time);
+    },
+    [name, setFieldValue]
+  );
 
-	return (
-		<MuiPickersUtilsProvider utils={DayjsUtils}>
-			<div className={className || 'm-8'}>
-				{dateTime ? (
-					<KeyboardDateTimePicker
-						ampm
-						mask="__-__-____ __:__"
-						autoOk
-						className="w-full"
-						format={format || 'DD-MM-YYYY HH:mm'}
-						onChange={handlePickerChange}
-						name={name}
-						label={label}
-						variant={variant}
-						inputVariant={inputVariant}
-						value={field.value}
-						{...props}
-					/>
-				) : (
-					<KeyboardDatePicker
-						className="w-full"
-						format={format || 'DD-MM-YYYY'}
-						mask="__-__-____"
-						autoOk
-						onChange={handlePickerChange}
-						name={name}
-						label={label}
-						variant={variant}
-						inputVariant={inputVariant}
-						value={field.value}
-						{...props}
-					/>
-				)}
+  return (
+    <MuiPickersUtilsProvider utils={DayjsUtils}>
+      <div className={className || "m-8"}>
+        {dateTime ? (
+          <KeyboardDateTimePicker
+            ampm
+            mask="__-__-____ __:__"
+            autoOk
+            className="w-full"
+            format={format || "DD-MM-YYYY HH:mm"}
+            onChange={handlePickerChange}
+            name={name}
+            label={label}
+            variant={variant}
+            inputVariant={inputVariant}
+            value={field.value}
+            {...props}
+          />
+        ) : (
+          <KeyboardDatePicker
+            className="w-full"
+            format={format || "DD-MM-YYYY"}
+            mask="__-__-____"
+            autoOk
+            onChange={handlePickerChange}
+            name={name}
+            label={label}
+            variant={variant}
+            inputVariant={inputVariant}
+            value={field.value}
+            {...props}
+          />
+        )}
 
-				{Boolean(meta.error) && <p className="text-red-600 text-xs m-8">{String(meta.error)}</p>}
-			</div>
-		</MuiPickersUtilsProvider>
-	);
+        {Boolean(meta.error) && (
+          <p className="text-red-600 text-xs m-8">{String(meta.error)}</p>
+        )}
+      </div>
+    </MuiPickersUtilsProvider>
+  );
 };
 
 FormikPicker.propTypes = {
-	format: PropTypes.string,
-	dateTime: PropTypes.bool,
-	name: PropTypes.string.isRequired,
-	label: PropTypes.string.isRequired,
-	variant: PropTypes.string,
-	inputVariant: PropTypes.string,
-	className: PropTypes.string
+  format: PropTypes.string,
+  dateTime: PropTypes.bool,
+  name: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  variant: PropTypes.string,
+  inputVariant: PropTypes.string,
+  className: PropTypes.string,
 };
 
-export const FormikTime = ({ name, label, variant, className, ampm = true, inputVariant }) => {
-	const [field, meta] = useField(name);
-	const { setFieldValue } = useFormikContext();
-	const classes = useStyles();
+export const FormikTime = ({
+  name,
+  label,
+  variant,
+  className,
+  ampm = true,
+  inputVariant,
+}) => {
+  const [field, meta] = useField(name);
+  const { setFieldValue } = useFormikContext();
+  const classes = useStyles();
 
-	const handleTimeChange = useCallback(
-		value => {
-			setFieldValue(name, value.format('HH:mm'));
-		},
-		[name, setFieldValue]
-	);
-	return (
-		<MuiPickersUtilsProvider utils={DayjsUtils}>
-			<TimePicker
-				className={className || classes.margin}
-				autoOk
-				onChange={handleTimeChange}
-				name={name}
-				label={label}
-				variant={variant}
-				inputVariant={inputVariant || 'standard'}
-				value={dayjs(field.value, 'HH:mm')}
-				ampm={ampm}
-			/>
-			{meta.error ? <p className="text-red-600 text-xs m-8">{String(meta.error)}</p> : null}
-		</MuiPickersUtilsProvider>
-	);
+  const handleTimeChange = useCallback(
+    (value) => {
+      setFieldValue(name, value.format("HH:mm"));
+    },
+    [name, setFieldValue]
+  );
+  return (
+    <MuiPickersUtilsProvider utils={DayjsUtils}>
+      <TimePicker
+        className={className || classes.margin}
+        autoOk
+        onChange={handleTimeChange}
+        name={name}
+        label={label}
+        variant={variant}
+        inputVariant={inputVariant || "standard"}
+        value={dayjs(field.value, "HH:mm")}
+        ampm={ampm}
+      />
+      {meta.error ? (
+        <p className="text-red-600 text-xs m-8">{String(meta.error)}</p>
+      ) : null}
+    </MuiPickersUtilsProvider>
+  );
 };
 
 FormikTime.propTypes = {
-	name: PropTypes.string.isRequired,
-	label: PropTypes.string.isRequired,
-	variant: PropTypes.string,
-	className: PropTypes.string,
-	inputVariant: PropTypes.string,
-	ampm: PropTypes.bool
+  name: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  variant: PropTypes.string,
+  className: PropTypes.string,
+  inputVariant: PropTypes.string,
+  ampm: PropTypes.bool,
 };
 
-export const BootstrapInput = withStyles(theme => ({
-	root: {
-		'label + &': {
-			marginTop: theme.spacing(3)
-		}
-	},
-	input: {
-		borderRadius: 4,
-		position: 'relative',
-		backgroundColor: theme.palette.background.paper,
-		border: '1px solid #ced4da',
-		fontSize: '1.4rem',
-		padding: '10px 26px 10px 12px',
-		transition: theme.transitions.create(['border-color', 'box-shadow']),
-		// Use the system font instead of the default Roboto font.
-		fontFamily: [
-			'-apple-system',
-			'BlinkMacSystemFont',
-			'"Segoe UI"',
-			'Roboto',
-			'"Helvetica Neue"',
-			'Arial',
-			'sans-serif',
-			'"Apple Color Emoji"',
-			'"Segoe UI Emoji"',
-			'"Segoe UI Symbol"'
-		].join(','),
-		'&:focus': {
-			borderRadius: 4,
-			borderColor: '#80bdff',
-			boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)'
-		}
-	}
+export const BootstrapInput = withStyles((theme) => ({
+  root: {
+    "label + &": {
+      marginTop: theme.spacing(3),
+    },
+  },
+  input: {
+    borderRadius: 4,
+    position: "relative",
+    backgroundColor: theme.palette.background.paper,
+    border: "1px solid #ced4da",
+    fontSize: "1.4rem",
+    padding: "10px 26px 10px 12px",
+    transition: theme.transitions.create(["border-color", "box-shadow"]),
+    // Use the system font instead of the default Roboto font.
+    fontFamily: [
+      "-apple-system",
+      "BlinkMacSystemFont",
+      '"Segoe UI"',
+      "Roboto",
+      '"Helvetica Neue"',
+      "Arial",
+      "sans-serif",
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(","),
+    "&:focus": {
+      borderRadius: 4,
+      borderColor: "#80bdff",
+      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.25)",
+    },
+  },
 }))(InputBase);
 
 export function Signature({ name, ...props }) {
-	const sigPad = useRef(null);
-	const [field, meta] = useField(name);
-	const { setFieldValue } = useFormikContext();
-	const classes = useStyles();
+  const sigPad = useRef(null);
+  const [field, meta] = useField(name);
+  const { setFieldValue } = useFormikContext();
+  const classes = useStyles();
 
-	const handleClear = useCallback(() => {
-		sigPad.current.clear();
-	}, [sigPad]);
+  const handleClear = useCallback(() => {
+    sigPad.current.clear();
+  }, [sigPad]);
 
-	const handleEnd = () => {
-		setFieldValue(name, sigPad.current.toDataURL());
-	};
+  const handleEnd = () => {
+    setFieldValue(name, sigPad.current.toDataURL());
+  };
 
-	return (
-		<div className={`${classes.margin} ${classes.instructions}`}>
-			<Grid spacing={3} container>
-				<Grid item xs={12}>
-					<h4 className="text-bold">Signature</h4>
-				</Grid>
-				<Grid item xs={12}>
-					<div className="sigCanvas">
-						<SignatureCanvas
-							name={name}
-							penColor="black"
-							canvasProps={{ className: 'sigPad' }}
-							ref={sigPad}
-							onEnd={handleEnd}
-							{...field}
-							{...props}
-						/>
-					</div>
-				</Grid>
-				<Grid item xs={3}>
-					<Button
-						variant="contained"
-						component="label"
-						className={classes.instructions}
-						onClick={handleClear}
-					>
-						Clear
-					</Button>
-				</Grid>
-			</Grid>
-			{meta.error ? <p className="text-red-600 text-xs m-8">{meta.error}</p> : null}
-		</div>
-	);
+  return (
+    <div className={`${classes.margin} ${classes.instructions}`}>
+      <Grid spacing={3} container>
+        <Grid item xs={12}>
+          <h4 className="text-bold">Signature</h4>
+        </Grid>
+        <Grid item xs={12}>
+          <div className="sigCanvas">
+            <SignatureCanvas
+              name={name}
+              penColor="black"
+              canvasProps={{ className: "sigPad" }}
+              ref={sigPad}
+              onEnd={handleEnd}
+              {...field}
+              {...props}
+            />
+          </div>
+        </Grid>
+        <Grid item xs={3}>
+          <Button
+            variant="contained"
+            component="label"
+            className={classes.instructions}
+            onClick={handleClear}
+          >
+            Clear
+          </Button>
+        </Grid>
+      </Grid>
+      {meta.error ? (
+        <p className="text-red-600 text-xs m-8">{meta.error}</p>
+      ) : null}
+    </div>
+  );
 }
 
 Signature.propTypes = {
-	name: PropTypes.string
+  name: PropTypes.string,
 };
 
 const ArrayContext = React.createContext({});
@@ -655,186 +734,78 @@ const ArrayContext = React.createContext({});
  * @returns Children provided with index, remove and push function from formik FieldArray
  */
 export function FormikArray({ name, defaultValue, children }) {
-	const [field] = useField(name);
-	const classes = useStyles();
-	return (
-		<FieldArray
-			name={name}
-			render={({ remove, push }) => (
-				<>
-					{field.value.length > 0 &&
-						field.value.map((value, index) => {
-							const formikFieldHelpers = {
-								index
-							};
-							return (
-								<Slide direction="up" in mountOnEnter unmountOnExit>
-									<div className="flex flex-col" key={index}>
-										<div className={`${classes.margin}`}>
-											<Button
-												variant="contained"
-												component="label"
-												className={`${classes.instructions} ${classes.margin}`}
-												onClick={() => {
-													push(defaultValue);
-												}}
-											>
-												Add New
-											</Button>
-											{field.value.length > 1 && (
-												<Button
-													variant="contained"
-													component="label"
-													className={`${classes.instructions} ${classes.margin}`}
-													onClick={() => remove(index)}
-												>
-													Remove
-												</Button>
-											)}
-										</div>
-										<ArrayContext.Provider value={formikFieldHelpers}>
-											{typeof children === 'function' ? children(formikFieldHelpers) : children}
-										</ArrayContext.Provider>
-									</div>
-								</Slide>
-							);
-						})}
-				</>
-			)}
-		/>
-	);
+  const [field] = useField(name);
+  const classes = useStyles();
+  return (
+    <FieldArray
+      name={name}
+      render={({ remove, push }) => (
+        <>
+          {field.value.length > 0 &&
+            field.value.map((value, index) => {
+              const formikFieldHelpers = {
+                index,
+              };
+              return (
+                <Slide direction="up" in mountOnEnter unmountOnExit>
+                  <div className="flex flex-col" key={index}>
+                    <div className={`${classes.margin}`}>
+                      <Button
+                        variant="contained"
+                        component="label"
+                        className={`${classes.instructions} ${classes.margin}`}
+                        onClick={() => {
+                          push(defaultValue);
+                        }}
+                      >
+                        Add New
+                      </Button>
+                      {field.value.length > 1 && (
+                        <Button
+                          variant="contained"
+                          component="label"
+                          className={`${classes.instructions} ${classes.margin}`}
+                          onClick={() => remove(index)}
+                        >
+                          Remove
+                        </Button>
+                      )}
+                    </div>
+                    <ArrayContext.Provider value={formikFieldHelpers}>
+                      {typeof children === "function"
+                        ? children(formikFieldHelpers)
+                        : children}
+                    </ArrayContext.Provider>
+                  </div>
+                </Slide>
+              );
+            })}
+        </>
+      )}
+    />
+  );
 }
 
 FormikArray.propTypes = {
-	name: PropTypes.string,
-	defaultValue: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
-	children: PropTypes.oneOfType([PropTypes.node.isRequired, PropTypes.func.isRequired])
+  name: PropTypes.string,
+  defaultValue: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  ),
+  children: PropTypes.oneOfType([
+    PropTypes.node.isRequired,
+    PropTypes.func.isRequired,
+  ]),
 };
-
-export function FormikHazardTable({ name, scoreField, data }) {
-	const { setFieldValue } = useFormikContext();
-	const classes = useStyles();
-
-	// Because components are looking to get a function that has THEIR
-	// Param, not our param, thus we have to return a function that has no param or event param
-	const handleClick = useCallback(
-		(val, score) => () => {
-			setFieldValue(name, val);
-			setFieldValue(scoreField, score);
-		},
-		[name, scoreField]
-	);
-
-	return (
-		<div className="gridContainer">
-			<Grid container spacing={0}>
-				<Grid item xs={2} className="columnTitle">
-					<Grid container alignItems="center" className={classes.full}>
-						<Grid item xs={12}>
-							<p className="text-md font-semibold text-center">Likelihood</p>
-						</Grid>
-					</Grid>
-				</Grid>
-				<Grid item xs={10}>
-					<Grid container spacing={0} alignItems="center" className="columnTitle">
-						<Grid item xs={12}>
-							<div className={`${classes.full}`}>
-								<p className="text-md font-semibold text-center">Consequence</p>
-							</div>
-						</Grid>
-					</Grid>
-					<Grid container alignItems="center" alignContent="center" className="columnTitle">
-						<Grid item xs>
-							<p className="text-md font-semibold text-center">Negligible</p>
-						</Grid>
-						<Grid item xs>
-							<p className="text-md font-semibold text-center">Insignificant</p>
-						</Grid>
-						<Grid item xs>
-							<p className="text-md font-semibold text-center">Moderate</p>
-						</Grid>
-						<Grid item xs>
-							<p className="text-md font-semibold text-center">Major</p>
-						</Grid>
-						<Grid item xs>
-							<p className="text-md font-semibold text-center">Catastrophic</p>
-						</Grid>
-					</Grid>
-					<Grid container alignItems="center" className="columnTitle">
-						<Grid item xs>
-							<p className="text-center font-semibold">No Medical treatment required</p>
-						</Grid>
-						<Grid item xs>
-							<p className="text-center font-semibold">
-								Reversible disability or impairment requiring hospitalization
-							</p>
-						</Grid>
-						<Grid item xs>
-							<p className="text-center font-semibold">
-								Disability or impairment (&lt;30%) to 1 or more persons
-							</p>
-						</Grid>
-						<Grid item xs>
-							<p className="text-center font-semibold">
-								Single fatality or severe disability (&gt;30%) to 1 or more persons
-							</p>
-						</Grid>
-						<Grid item xs>
-							<p className="text-center font-semibold">
-								Multiple fatalities or significant irreversible effects (&gt; 30%) to &gt;1 person
-							</p>
-						</Grid>
-					</Grid>
-				</Grid>
-				{data.likelihoodTable.map(value => (
-					<Grid container key={value.row} className="rowTitle">
-						<Grid item xs={2}>
-							<p className="text-center font-semibold">{value.header}</p>
-						</Grid>
-						<Grid item xs={10}>
-							<ButtonGroup
-								size="large"
-								color="primary"
-								aria-label="large outlined primary"
-								className={classes.full}
-							>
-								{value.items.map(item => (
-									<Button
-										key={item.value}
-										className={`btn${item.title} ${classes.full} text-xs font-semibold`}
-										onClick={handleClick(item.value, item.score)}
-									>
-										{item.title}
-									</Button>
-								))}
-							</ButtonGroup>
-						</Grid>
-					</Grid>
-				))}
-			</Grid>
-		</div>
-	);
-}
-
-FormikHazardTable.propTypes = {
-	name: PropTypes.string,
-	scoreField: PropTypes.string,
-	data: PropTypes.shape({
-		likelihoodTable: PropTypes.arrayOf(PropTypes.object).isRequired
-	})
-};
-
 export default {
-	FormikArray,
-	FormikTextField,
-	FormikHazardTable,
-	FormikFileUpload,
-	FormikPicker,
-	FormikSelect,
-	AutoCompleteTextField,
-	FormikRadioButton,
-	FormikTime,
-	FormikNativeTime,
-	FormikSwitch,
-	FormikCheckbox
+  FormikArray,
+  FormikTextField,
+  FormikFileUpload,
+  FormikPicker,
+  FormikSelect,
+  AutoCompleteTextField,
+  FormikRadioButton,
+  FormikTime,
+  FormikNativeTime,
+  FormikSwitch,
+  FormikCheckbox,
 };
