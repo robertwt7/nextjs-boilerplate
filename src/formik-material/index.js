@@ -43,7 +43,7 @@ import {
 import { useField, useFormikContext, FieldArray } from "formik";
 import PropTypes from "prop-types";
 import SignatureCanvas from "react-signature-canvas";
-import "../styles/styles.scss";
+import "./style.scss";
 import * as dayjs from "dayjs";
 import axios from "axios";
 import clsx from "clsx";

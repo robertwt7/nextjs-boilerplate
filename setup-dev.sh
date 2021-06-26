@@ -17,6 +17,9 @@ yarn add formik yup dayjs axios clsx react-signature-canvas prop-types
 yarn add redux redux-persist redux-saga react-redux
 yarn add tailwindcss@latest postcss@latest autoprefixer@latest
 
+# Nextjs req for scss file
+yarn add sass
+
 
 # Setup tailwind
 npx tailwindcss init -p
